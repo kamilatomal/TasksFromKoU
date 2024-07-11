@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -17,6 +18,8 @@ public class Ball : MonoBehaviour
     private Vector3 _targetPosition;
     private Vector3 _startDirectionToTarget;
     private bool _isDragged;
+
+    public event Action OnBallLand;
 
     private void Awake()
     {
@@ -47,6 +50,11 @@ public class Ball : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        OnBallLand?.Invoke();
+    }
+
     private void OnMouseDown()
     {
         _isDragged = true;
@@ -62,10 +70,14 @@ public class Ball : MonoBehaviour
 
     private void OnMouseUp()
     {
-        _startDirectionToTarget = (_targetPosition - transform.position );
+        _startDirectionToTarget = (_targetPosition - transform.position);
         _rigidBody2D.isKinematic = false;
         _isDragged = false;
+        HandleBallBehaviourAfterRelease();
+    }
 
+    private void HandleBallBehaviourAfterRelease()
+    {
         float distanceBetweenJointAndBall = Vector2.Distance(_springJoint.target, transform.position);
         if (distanceBetweenJointAndBall < _minBallShootDistance)
         {
@@ -81,6 +93,10 @@ public class Ball : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if(!_isDragged)
+        {
+            return;
+        }
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(_targetPosition, _maxDragDistance);
         Vector2 direction = (_mouseWorldPosition - _springJoint.target).normalized;
