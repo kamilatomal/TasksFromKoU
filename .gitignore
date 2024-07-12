@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-SlingTaskKoU/[Ll]ibrary/
-SlingTaskKoU/[Tt]emp/
-SlingTaskKoU/[Oo]bj/
-SlingTaskKoU/[Bb]uild/
-SlingTaskKoU/[Bb]uilds/
-SlingTaskKoU/[Ll]ogs/
-SlingTaskKoU/[Uu]ser[Ss]ettings/
+TasksFromKoU/[Ll]ibrary/
+TasksFromKoU/[Tt]emp/
+TasksFromKoU/[Oo]bj/
+TasksFromKoU/[Bb]uild/
+TasksFromKoU/[Bb]uilds/
+TasksFromKoU/[Ll]ogs/
+TasksFromKoU/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
