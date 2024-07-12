@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b9d34fe8a18fab4aa07057335d2e136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ballRigidbody: {fileID: 9062681458125324812}
 --- !u!50 &9062681458125324812
 Rigidbody2D:
   serializedVersion: 4
@@ -112,8 +113,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 2
-  m_AngularDrag: 2
+  m_LinearDrag: 0.2
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:

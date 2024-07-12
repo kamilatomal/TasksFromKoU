@@ -25,6 +25,6 @@ public class BallSpawnerUI : MonoBehaviour
 
     private void UpdateBallAmountText()
     {
-        _ballAmountText.text = _ballSpawner.SpawnedBallAmount.ToString();
+        _ballAmountText.text = _ballSpawner.GravityBalls.Count.ToString();
     }
 }

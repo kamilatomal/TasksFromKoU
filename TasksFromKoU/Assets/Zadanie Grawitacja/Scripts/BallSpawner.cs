@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
@@ -9,16 +10,19 @@ public class BallSpawner : MonoBehaviour
     private float _spawnFrequency = 0.25f;
     [SerializeField]
     private int _maxBallAmount = 250;
+    [SerializeField]
+    private Transform _ballContainer;
 
-    private int _spawnedBallAmount = 0;
     private float _timer;
     private float _minCameraX;
     private float _minCameraY;
     private float _maxCameraX;
     private float _maxCameraY;
     private Vector2 _spawnRandomPosition;
+    private List<GravityBall> _gravityBalls = new List<GravityBall>();
+    private GravityBall _spawnedBall;
 
-    public int SpawnedBallAmount => _spawnedBallAmount;
+    public List<GravityBall> GravityBalls => _gravityBalls;
     public event Action OnBallSpawned;
 
     private void Start()
@@ -29,7 +33,7 @@ public class BallSpawner : MonoBehaviour
     private void Update()
     {
         _timer += Time.deltaTime;
-        if (_timer >= _spawnFrequency && _spawnedBallAmount < _maxBallAmount)
+        if (_timer >= _spawnFrequency && _gravityBalls.Count < _maxBallAmount)
         {
             SpawnGravityBall();
             _timer = 0;
@@ -50,8 +54,9 @@ public class BallSpawner : MonoBehaviour
     private void SpawnGravityBall()
     {
         _spawnRandomPosition = new Vector2(UnityEngine.Random.Range(_minCameraX, _maxCameraX), UnityEngine.Random.Range(_minCameraY, _maxCameraY));
-        GravityBall createdBall = Instantiate(_gravityBallPrefab, _spawnRandomPosition, Quaternion.identity);
-        _spawnedBallAmount += 1;
+        _spawnedBall = Instantiate(_gravityBallPrefab, _spawnRandomPosition, Quaternion.identity);
+        _spawnedBall.transform.SetParent(_ballContainer);
+        _gravityBalls.Add(_spawnedBall);
         OnBallSpawned?.Invoke();
     }
 }
