@@ -20,6 +20,7 @@ public class Ball : MonoBehaviour
     private bool _isDragged;
 
     public event Action OnBallLand;
+    public event Action OnBallShoot;
 
     private void Awake()
     {
@@ -88,6 +89,7 @@ public class Ball : MonoBehaviour
         {
             _springJoint.enabled = false;
             _rigidBody2D.AddForce(_startDirectionToTarget * _forceValue, ForceMode2D.Impulse);
+            OnBallShoot?.Invoke();
         }
     }
 

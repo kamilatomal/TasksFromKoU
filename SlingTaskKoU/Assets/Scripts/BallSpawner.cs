@@ -1,19 +1,24 @@
+using System;
 using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
     [SerializeField]
     private Ball _ballPrefab;
+    private Ball _activeBall;
+    public Ball Ball => _activeBall;
 
-    private Ball _createdBall;
+    public Action<Ball> OnActiveBallShootAction;
+    public Action<Ball> OnActiveBallLandedAction;
 
     private void OnDisable()
     {
-        if (_createdBall == null)
+        if (_activeBall == null)
         {
             return;
         }
-        _createdBall.OnBallLand -= CreateBall;
+        _activeBall.OnBallLand -= OnBallLended;
+        _activeBall.OnBallLand -= OnBallShoot;
     }
 
     private void Start()
@@ -23,11 +28,24 @@ public class BallSpawner : MonoBehaviour
 
     private void CreateBall()
     {
-        if (_createdBall != null)
+        if (_activeBall != null)
         {
-            _createdBall.OnBallLand -= CreateBall;
+            _activeBall.OnBallLand -= OnBallLended;
+            _activeBall.OnBallLand -= OnBallShoot;
         }
-        _createdBall = Instantiate(_ballPrefab, transform.position, Quaternion.identity);
-        _createdBall.OnBallLand += CreateBall;
+        _activeBall = Instantiate(_ballPrefab, transform.position, Quaternion.identity);
+        _activeBall.OnBallLand += OnBallLended;
+        _activeBall.OnBallShoot += OnBallShoot;
+    }
+
+    private void OnBallShoot()
+    {
+        OnActiveBallShootAction?.Invoke(_activeBall);
+    }
+
+    private void OnBallLended()
+    {
+        OnActiveBallLandedAction?.Invoke(_activeBall);
+        CreateBall();
     }
 }
