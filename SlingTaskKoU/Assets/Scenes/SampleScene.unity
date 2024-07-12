@@ -681,7 +681,7 @@ GameObject:
   - component: {fileID: 814915759}
   - component: {fileID: 814915760}
   m_Layer: 0
-  m_Name: BallSpawner
+  m_Name: SlingshotController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

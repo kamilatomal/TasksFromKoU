@@ -4,7 +4,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField]
-    private BallSpawner _ballSpawner;
+    private SlingshotController _ballSpawner;
     [SerializeField]
     private CinemachineCamera _cinemachineCamera;
     [SerializeField]

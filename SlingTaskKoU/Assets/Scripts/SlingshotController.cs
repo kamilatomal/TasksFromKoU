@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class BallSpawner : MonoBehaviour
+public class SlingshotController : MonoBehaviour
 {
     [SerializeField]
     private Ball _ballPrefab;
