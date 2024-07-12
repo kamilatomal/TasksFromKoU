@@ -8,8 +8,6 @@ public class BallSpawnerUI : MonoBehaviour
     [SerializeField]
     private BallSpawner _ballSpawner;
 
-    private string _amountText = "Balls amount: ";
-
     private void Start()
     {
         UpdateBallAmountText();
@@ -27,6 +25,6 @@ public class BallSpawnerUI : MonoBehaviour
 
     private void UpdateBallAmountText()
     {
-        _ballAmountText.text = _amountText + _ballSpawner.SpawnedBallAmount.ToString();
+        _ballAmountText.text = _ballSpawner.SpawnedBallAmount.ToString();
     }
 }
