@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -14,10 +15,12 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private float _forceValue = 0.1f;
 
+    private const float AFTERLANDDELAY = 1f;
     private Vector2 _mouseWorldPosition;
     private Vector3 _targetPosition;
     private Vector3 _startDirectionToTarget;
     private bool _isDragged;
+    private Coroutine _ballLandedCoroutine;
 
     public event Action OnBallLand;
     public event Action OnBallShoot;
@@ -53,7 +56,11 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        OnBallLand?.Invoke();
+        if (_ballLandedCoroutine != null)
+        {
+            StopCoroutine(_ballLandedCoroutine);
+        }
+        _ballLandedCoroutine = StartCoroutine(BallLandedCoroutine());
     }
 
     private void OnMouseDown()
@@ -91,6 +98,12 @@ public class Ball : MonoBehaviour
             _rigidBody2D.AddForce(_startDirectionToTarget * _forceValue, ForceMode2D.Impulse);
             OnBallShoot?.Invoke();
         }
+    }
+
+    private IEnumerator BallLandedCoroutine()
+    {
+        yield return new WaitForSeconds(AFTERLANDDELAY);
+        OnBallLand?.Invoke();
     }
 
     private void OnDrawGizmos()
