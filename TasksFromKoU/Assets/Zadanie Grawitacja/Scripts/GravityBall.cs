@@ -9,23 +9,34 @@ public class GravityBall : MonoBehaviour
     public Rigidbody2D BallRigidbody => _ballRigidbody;
     private float _ballRadius;
 
-    public event Action<Collision2D, GravityBall, GravityBall> OnCollisionBetweenBallsHappened;
+    public event Action<GravityBall, GravityBall, Vector3> OnCollisionBetweenBallsHappened;
+    public event Action<GravityBall> OnBallDestroyed;
+
+    private bool _isActive = true;
 
     private void Awake()
     {
         _ballRadius = transform.localScale.x / 2;
     }
 
+    private void OnDestroy()
+    {
+        OnBallDestroyed?.Invoke(this);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(!_isActive)
+        {
+            return;
+        }
         GravityBall otherGravityBall = collision.collider.GetComponent<GravityBall>();
         if (otherGravityBall == null)
         {
             return;
         }
-        OnCollisionBetweenBallsHappened?.Invoke(collision, this, otherGravityBall);
-        Destroy(this.gameObject);
-        Destroy(otherGravityBall.gameObject);
+        
+        OnCollisionBetweenBallsHappened?.Invoke(this, otherGravityBall, collision.contacts[0].point);
     }
 
     public float GetGravityBallArea()
@@ -37,5 +48,11 @@ public class GravityBall : MonoBehaviour
     {
         transform.localScale = new Vector3(value * 2, value * 2, transform.localScale.z);
         _ballRadius = value;
+    }
+
+    public void DestroyBall()
+    {
+        _isActive = false;
+        Destroy(this.gameObject);
     }
 }

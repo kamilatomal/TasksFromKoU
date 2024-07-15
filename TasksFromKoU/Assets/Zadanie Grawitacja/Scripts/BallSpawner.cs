@@ -18,7 +18,6 @@ public class BallSpawner : MonoBehaviour
     private float _minCameraY;
     private float _maxCameraX;
     private float _maxCameraY;
-    private Vector2 _spawnRandomPosition;
     private List<GravityBall> _gravityBalls = new List<GravityBall>();
 
     public List<GravityBall> GravityBalls => _gravityBalls;
@@ -50,17 +49,29 @@ public class BallSpawner : MonoBehaviour
         _maxCameraY = upperRightCorner.y;
     }
 
-    private void SpawnGravityBall(float? radius = null)
+    private void SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null)
     {
-        _spawnRandomPosition = new Vector2(UnityEngine.Random.Range(_minCameraX, _maxCameraX), UnityEngine.Random.Range(_minCameraY, _maxCameraY));
-        GravityBall spawnedBall = Instantiate(_gravityBallPrefab, _spawnRandomPosition, Quaternion.identity);
-        if(radius.HasValue)
+        Vector3 ballPosition;
+        if (spawnPosition.HasValue)
+        {
+            ballPosition = spawnPosition.Value;
+        }
+        else
+        {
+            ballPosition = new Vector2(UnityEngine.Random.Range(_minCameraX, _maxCameraX), UnityEngine.Random.Range(_minCameraY, _maxCameraY));
+        }
+
+        GravityBall spawnedBall = Instantiate(_gravityBallPrefab, ballPosition, Quaternion.identity);
+
+        if (radius.HasValue)
         {
             spawnedBall.SetRadius(radius.Value);
         }
+
         spawnedBall.transform.SetParent(_ballContainer);
         _gravityBalls.Add(spawnedBall);
-        spawnedBall.OnCollisionBetweenBallsHappened += SetupCreatedBall;
+        spawnedBall.OnCollisionBetweenBallsHappened += OnBallsColision;
+        spawnedBall.OnBallDestroyed += OnBallDestroyed;
         OnBallSpawned?.Invoke();
     }
 
@@ -70,9 +81,18 @@ public class BallSpawner : MonoBehaviour
         return (float)Math.Sqrt(newBallArea / Math.PI);
     }
 
-    private void SetupCreatedBall(Collision2D collision, GravityBall ballA, GravityBall ballB)
+    private void OnBallsColision(GravityBall ballA, GravityBall ballB, Vector3 spawnPosition)
     {
         float newBallScale = GetNewGravityBallRadius(ballA, ballB);
-        SpawnGravityBall(newBallScale);
+        ballA.DestroyBall();
+        ballB.DestroyBall();
+        SpawnGravityBall(newBallScale, spawnPosition);
+    }
+
+    private void OnBallDestroyed(GravityBall gravityBall)
+    {
+        gravityBall.OnCollisionBetweenBallsHappened -= OnBallsColision;
+        gravityBall.OnBallDestroyed -= OnBallDestroyed;
+        _gravityBalls.Remove(gravityBall); 
     }
 }
