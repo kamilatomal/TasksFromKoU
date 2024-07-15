@@ -64,7 +64,7 @@ public class BallSpawner : MonoBehaviour
         OnBallSpawned?.Invoke();
     }
 
-    private float GetNewGravityBallRadious(GravityBall ballA, GravityBall ballB)
+    private float GetNewGravityBallRadius(GravityBall ballA, GravityBall ballB)
     {
         float newBallArea = ballA.GetGravityBallArea() + ballB.GetGravityBallArea();
         return (float)Math.Sqrt(newBallArea / Math.PI);
@@ -72,7 +72,7 @@ public class BallSpawner : MonoBehaviour
 
     private void SetupCreatedBall(Collision2D collision, GravityBall ballA, GravityBall ballB)
     {
-        float newBallScale = GetNewGravityBallRadious(ballA, ballB);
+        float newBallScale = GetNewGravityBallRadius(ballA, ballB);
         SpawnGravityBall(newBallScale);
     }
 }
