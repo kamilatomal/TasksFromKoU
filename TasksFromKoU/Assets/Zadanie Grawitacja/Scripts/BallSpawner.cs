@@ -12,6 +12,8 @@ public class BallSpawner : MonoBehaviour
     private int _maxBallAmount = 250;
     [SerializeField]
     private Transform _ballContainer;
+    [SerializeField]
+    private float _maxBallMass = 50;
 
     private float _timer;
     private float _minCameraX;
@@ -19,9 +21,11 @@ public class BallSpawner : MonoBehaviour
     private float _maxCameraX;
     private float _maxCameraY;
     private List<GravityBall> _gravityBalls = new List<GravityBall>();
+    private float _newBallMass;
 
     public List<GravityBall> GravityBalls => _gravityBalls;
     public event Action OnBallSpawned;
+    public event Action OnBallDestroyedAction;
 
     private void Start()
     {
@@ -49,7 +53,7 @@ public class BallSpawner : MonoBehaviour
         _maxCameraY = upperRightCorner.y;
     }
 
-    private void SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null)
+    private void SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null, float? mass = null)
     {
         Vector3 ballPosition;
         if (spawnPosition.HasValue)
@@ -68,6 +72,11 @@ public class BallSpawner : MonoBehaviour
             spawnedBall.SetRadius(radius.Value);
         }
 
+        if (mass.HasValue)
+        {
+            spawnedBall.SetMass(mass.Value);
+        }
+
         spawnedBall.transform.SetParent(_ballContainer);
         _gravityBalls.Add(spawnedBall);
         spawnedBall.OnCollisionBetweenBallsHappened += OnBallsColision;
@@ -81,18 +90,39 @@ public class BallSpawner : MonoBehaviour
         return (float)Math.Sqrt(newBallArea / Math.PI);
     }
 
+    private float GetNewGravityBallMass(GravityBall ballA, GravityBall ballB)
+    {
+        float newBallMass = ballA.GetGravityBallMass() + ballB.GetGravityBallMass();
+        return newBallMass;
+    }
+
     private void OnBallsColision(GravityBall ballA, GravityBall ballB, Vector3 spawnPosition)
     {
         float newBallScale = GetNewGravityBallRadius(ballA, ballB);
+        _newBallMass = GetNewGravityBallMass(ballA, ballB);
         ballA.DestroyBall();
         ballB.DestroyBall();
-        SpawnGravityBall(newBallScale, spawnPosition);
+        if (_newBallMass >= _maxBallMass)
+        {
+            BallExplosion();
+            return;
+        }
+        SpawnGravityBall(newBallScale, spawnPosition, _newBallMass);
     }
 
     private void OnBallDestroyed(GravityBall gravityBall)
     {
         gravityBall.OnCollisionBetweenBallsHappened -= OnBallsColision;
         gravityBall.OnBallDestroyed -= OnBallDestroyed;
-        _gravityBalls.Remove(gravityBall); 
+        _gravityBalls.Remove(gravityBall);
+        OnBallDestroyedAction?.Invoke();
+    }
+
+    private void BallExplosion()
+    {
+        for (int i = 0; i < _maxBallMass; i++)
+        {
+            SpawnGravityBall();
+        }
     }
 }

@@ -6,8 +6,9 @@ public class GravityBall : MonoBehaviour
     [SerializeField]
     private Rigidbody2D _ballRigidbody;
 
-    public Rigidbody2D BallRigidbody => _ballRigidbody;
     private float _ballRadius;
+
+    public Rigidbody2D BallRigidbody => _ballRigidbody;
 
     public event Action<GravityBall, GravityBall, Vector3> OnCollisionBetweenBallsHappened;
     public event Action<GravityBall> OnBallDestroyed;
@@ -44,10 +45,20 @@ public class GravityBall : MonoBehaviour
         return (float)(Math.PI * Math.Pow(_ballRadius, 2));
     }
 
+    public float GetGravityBallMass()
+    {
+        return _ballRigidbody.mass;
+    }
+
     public void SetRadius(float value)
     {
         transform.localScale = new Vector3(value * 2, value * 2, transform.localScale.z);
         _ballRadius = value;
+    }
+
+    public void SetMass(float value)
+    {
+        _ballRigidbody.mass = value;
     }
 
     public void DestroyBall()

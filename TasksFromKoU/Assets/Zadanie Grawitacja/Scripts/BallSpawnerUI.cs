@@ -16,11 +16,13 @@ public class BallSpawnerUI : MonoBehaviour
     private void OnEnable()
     {
         _ballSpawner.OnBallSpawned += UpdateBallAmountText;
+        _ballSpawner.OnBallDestroyedAction += UpdateBallAmountText;
     }
 
     private void OnDisable()
     {
         _ballSpawner.OnBallSpawned -= UpdateBallAmountText;
+        _ballSpawner.OnBallDestroyedAction -= UpdateBallAmountText;
     }
 
     private void UpdateBallAmountText()
