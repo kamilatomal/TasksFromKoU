@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ballRigidbody: {fileID: 9062681458125324812}
+  _ballCollider: {fileID: 7380309566949882436}
 --- !u!50 &9062681458125324812
 Rigidbody2D:
   serializedVersion: 4

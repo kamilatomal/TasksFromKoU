@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,28 +15,54 @@ public class BallSpawner : MonoBehaviour
     private Transform _ballContainer;
     [SerializeField]
     private float _maxBallMass = 50;
+    [SerializeField]
+    private float _forceValue = 0.1f;
+    [SerializeField]
+    private float _turnOnColliderDelay = 0.5f;
 
     private float _timer;
     private float _minCameraX;
     private float _minCameraY;
     private float _maxCameraX;
     private float _maxCameraY;
-    private List<GravityBall> _gravityBalls = new List<GravityBall>();
     private float _newBallMass;
+    private float _minBallMass = 1f;
+    private float _defaultRadius = 0.5f;
+    private Vector3 _newBallPosition;
+    private List<GravityBall> _gravityBalls = new List<GravityBall>();
+    private ForceType _forceType;
 
     public List<GravityBall> GravityBalls => _gravityBalls;
+    public ForceType ForceType => _forceType;
     public event Action OnBallSpawned;
     public event Action OnBallDestroyedAction;
 
     private void Start()
     {
+        _forceType = ForceType.Attract;
         SetBounds();
+    }
+
+    private void OnEnable()
+    {
+        OnBallSpawned += OnBallAmountChanged;
+        OnBallDestroyedAction += OnBallAmountChanged;
+    }
+
+    private void OnDisable()
+    {
+        OnBallSpawned -= OnBallAmountChanged;
+        OnBallDestroyedAction -= OnBallAmountChanged;
     }
 
     private void Update()
     {
+        if (_forceType == ForceType.Repel)
+        {
+            return;
+        }
         _timer += Time.deltaTime;
-        if (_timer >= _spawnFrequency && _gravityBalls.Count < _maxBallAmount)
+        if (_timer >= _spawnFrequency)
         {
             SpawnGravityBall();
             _timer = 0;
@@ -53,8 +80,13 @@ public class BallSpawner : MonoBehaviour
         _maxCameraY = upperRightCorner.y;
     }
 
-    private void SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null, float? mass = null)
+    private GravityBall SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null, float? mass = null)
     {
+        if (_gravityBalls.Count >= _maxBallAmount)
+        {
+            return null;
+        }
+
         Vector3 ballPosition;
         if (spawnPosition.HasValue)
         {
@@ -82,6 +114,7 @@ public class BallSpawner : MonoBehaviour
         spawnedBall.OnCollisionBetweenBallsHappened += OnBallsColision;
         spawnedBall.OnBallDestroyed += OnBallDestroyed;
         OnBallSpawned?.Invoke();
+        return spawnedBall;
     }
 
     private float GetNewGravityBallRadius(GravityBall ballA, GravityBall ballB)
@@ -98,8 +131,14 @@ public class BallSpawner : MonoBehaviour
 
     private void OnBallsColision(GravityBall ballA, GravityBall ballB, Vector3 spawnPosition)
     {
+        if (_forceType == ForceType.Repel)
+        {
+            return;
+        }
+
         float newBallScale = GetNewGravityBallRadius(ballA, ballB);
         _newBallMass = GetNewGravityBallMass(ballA, ballB);
+        _newBallPosition = spawnPosition;
         ballA.DestroyBall();
         ballB.DestroyBall();
         if (_newBallMass >= _maxBallMass)
@@ -122,7 +161,30 @@ public class BallSpawner : MonoBehaviour
     {
         for (int i = 0; i < _maxBallMass; i++)
         {
-            SpawnGravityBall();
+            GravityBall gravityBall = SpawnGravityBall(_defaultRadius, _newBallPosition, _minBallMass);
+            if(gravityBall == null)
+            {
+                break;
+            }
+            gravityBall.BallCollider.enabled = false;
+            float randomX = UnityEngine.Random.Range(-1f, 1f);
+            float randomY = UnityEngine.Random.Range(-1f, 1f);
+            gravityBall.BallRigidbody.AddForce(new Vector2(randomX, randomY).normalized * _forceValue, ForceMode2D.Impulse);
+            StartCoroutine(TurnOnColliderCoroutine(gravityBall));
+        }
+    }
+
+    private IEnumerator TurnOnColliderCoroutine(GravityBall gravityBall)
+    {
+        yield return new WaitForSeconds(_turnOnColliderDelay);
+        gravityBall.BallCollider.enabled = true;
+    }
+
+    private void OnBallAmountChanged()
+    {
+        if (_gravityBalls.Count >= _maxBallAmount)
+        {
+            _forceType = ForceType.Repel;
         }
     }
 }

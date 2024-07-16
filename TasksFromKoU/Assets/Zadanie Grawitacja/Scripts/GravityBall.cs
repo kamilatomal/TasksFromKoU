@@ -5,15 +5,20 @@ public class GravityBall : MonoBehaviour
 {
     [SerializeField]
     private Rigidbody2D _ballRigidbody;
+    [SerializeField]
+    private Collider2D _ballCollider;
 
     private float _ballRadius;
 
     public Rigidbody2D BallRigidbody => _ballRigidbody;
+    public Collider2D BallCollider => _ballCollider;
 
     public event Action<GravityBall, GravityBall, Vector3> OnCollisionBetweenBallsHappened;
     public event Action<GravityBall> OnBallDestroyed;
 
     private bool _isActive = true;
+
+    private bool _onBallDestroyedCalled;
 
     private void Awake()
     {
@@ -22,7 +27,10 @@ public class GravityBall : MonoBehaviour
 
     private void OnDestroy()
     {
-        OnBallDestroyed?.Invoke(this);
+        if(!_onBallDestroyedCalled)
+        {
+            OnBallDestroyed?.Invoke(this);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -63,6 +71,8 @@ public class GravityBall : MonoBehaviour
 
     public void DestroyBall()
     {
+        OnBallDestroyed?.Invoke(this);
+        _onBallDestroyedCalled = true;
         _isActive = false;
         Destroy(this.gameObject);
     }

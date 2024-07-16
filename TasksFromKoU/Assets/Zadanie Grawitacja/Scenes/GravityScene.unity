@@ -738,8 +738,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gravityBallPrefab: {fileID: 3955006449198389549, guid: deb3259ffaf252345ae8b279f6899cda, type: 3}
   _spawnFrequency: 0.25
-  _maxBallAmount: 50
+  _maxBallAmount: 250
   _ballContainer: {fileID: 1840405231}
+  _maxBallMass: 50
+  _forceValue: 25
+  _turnOnColliderDelay: 0.5
 --- !u!4 &1436994094
 Transform:
   m_ObjectHideFlags: 0
