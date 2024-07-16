@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class BallSpawnerUI : MonoBehaviour
+public class GravityBallSpawnerUI : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI _ballAmountText;
