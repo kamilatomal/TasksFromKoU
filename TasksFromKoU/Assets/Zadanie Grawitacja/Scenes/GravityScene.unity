@@ -155,6 +155,53 @@ Transform:
   - {fileID: 113589677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &40243249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 40243251}
+  - component: {fileID: 40243250}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &40243250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40243249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eb68b0a5b35e6645b05b272f45cb560, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gravityBallPrefab: {fileID: 3955006449198389549, guid: deb3259ffaf252345ae8b279f6899cda, type: 3}
+  _defaultCapacity: 100
+  _maxCapacity: 300
+--- !u!4 &40243251
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40243249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &113589674
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,7 +580,7 @@ GameObject:
   - component: {fileID: 470514900}
   - component: {fileID: 470514901}
   m_Layer: 0
-  m_Name: AttractController
+  m_Name: GravityBallForceController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -566,8 +613,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e0b55c2ff55f84cb2b034a061d0ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ballSpawner: {fileID: 1436994093}
-  _g: 100
+  _ballSpawner: {fileID: 1436994095}
+  _g: 150
 --- !u!1 &1071210735
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,7 +661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ballAmountText: {fileID: 172008779}
-  _ballSpawner: {fileID: 1436994093}
+  _ballSpawner: {fileID: 1436994095}
 --- !u!1 &1304273111
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,7 +763,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1436994094}
-  - component: {fileID: 1436994093}
+  - component: {fileID: 1436994095}
   m_Layer: 0
   m_Name: BallSpawner
   m_TagString: Untagged
@@ -724,25 +771,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1436994093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1436994092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09049da36882dde4cb8a2a0f1de9c97c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gravityBallPrefab: {fileID: 3955006449198389549, guid: deb3259ffaf252345ae8b279f6899cda, type: 3}
-  _spawnFrequency: 0.25
-  _maxBallAmount: 250
-  _ballContainer: {fileID: 1840405231}
-  _maxBallMass: 50
-  _forceValue: 25
-  _turnOnColliderDelay: 0.5
 --- !u!4 &1436994094
 Transform:
   m_ObjectHideFlags: 0
@@ -759,6 +787,24 @@ Transform:
   - {fileID: 1840405231}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1436994095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1436994092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a68ebd95187dac940b9f90d5bfa0b05a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawnFrequency: 0.25
+  _maxBallAmount: 250
+  _ballContainer: {fileID: 1840405231}
+  _maxBallMass: 50
+  _forceValue: 50
+  _turnOnColliderDelay: 0.5
 --- !u!1 &1840405230
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,3 +946,4 @@ SceneRoots:
   - {fileID: 6096370}
   - {fileID: 1436994094}
   - {fileID: 470514900}
+  - {fileID: 40243251}

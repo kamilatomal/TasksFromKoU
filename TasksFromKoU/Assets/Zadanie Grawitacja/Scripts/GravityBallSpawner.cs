@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GravityBallSpawner : MonoBehaviour
 {
-    [SerializeField]
-    private GravityBall _gravityBallPrefab;
     [SerializeField]
     private float _spawnFrequency = 0.25f;
     [SerializeField]
@@ -80,7 +77,7 @@ public class GravityBallSpawner : MonoBehaviour
         _maxCameraY = upperRightCorner.y;
     }
 
-    private GravityBall SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null, float? mass = null)
+    private GravityBall SpawnGravityBall(float? radius = null, Vector3? spawnPosition = null, float? mass = null, float turnOnColliderDelay = 0)
     {
         if (_gravityBalls.Count >= _maxBallAmount)
         {
@@ -97,8 +94,8 @@ public class GravityBallSpawner : MonoBehaviour
             ballPosition = new Vector2(UnityEngine.Random.Range(_minCameraX, _maxCameraX), UnityEngine.Random.Range(_minCameraY, _maxCameraY));
         }
 
-        GravityBall spawnedBall = Instantiate(_gravityBallPrefab, ballPosition, Quaternion.identity);
-
+        GravityBall spawnedBall = PoolManager.Instance.GetBall();
+        
         if (radius.HasValue)
         {
             spawnedBall.SetRadius(radius.Value);
@@ -110,10 +107,12 @@ public class GravityBallSpawner : MonoBehaviour
         }
 
         spawnedBall.transform.SetParent(_ballContainer);
+        spawnedBall.transform.position = ballPosition;
         _gravityBalls.Add(spawnedBall);
         spawnedBall.OnCollisionBetweenBallsHappened += OnBallsColision;
         spawnedBall.OnBallDestroyed += OnBallDestroyed;
         OnBallSpawned?.Invoke();
+        spawnedBall.ActivateWithDelay(turnOnColliderDelay);
         return spawnedBall;
     }
 
@@ -139,8 +138,8 @@ public class GravityBallSpawner : MonoBehaviour
         float newBallScale = GetNewGravityBallRadius(ballA, ballB);
         _newBallMass = GetNewGravityBallMass(ballA, ballB);
         _newBallPosition = spawnPosition;
-        ballA.DestroyBall();
-        ballB.DestroyBall();
+        PoolManager.Instance.ReturnBallBackToPool(ballA);
+        PoolManager.Instance.ReturnBallBackToPool(ballB);
         if (_newBallMass >= _maxBallMass)
         {
             BallExplosion();
@@ -161,23 +160,15 @@ public class GravityBallSpawner : MonoBehaviour
     {
         for (int i = 0; i < _maxBallMass; i++)
         {
-            GravityBall gravityBall = SpawnGravityBall(_defaultRadius, _newBallPosition, _minBallMass);
+            GravityBall gravityBall = SpawnGravityBall(_defaultRadius, _newBallPosition, _minBallMass, _turnOnColliderDelay);
             if(gravityBall == null)
             {
                 break;
             }
-            gravityBall.BallCollider.enabled = false;
             float randomX = UnityEngine.Random.Range(-1f, 1f);
             float randomY = UnityEngine.Random.Range(-1f, 1f);
             gravityBall.BallRigidbody.AddForce(new Vector2(randomX, randomY).normalized * _forceValue, ForceMode2D.Impulse);
-            StartCoroutine(TurnOnColliderCoroutine(gravityBall));
         }
-    }
-
-    private IEnumerator TurnOnColliderCoroutine(GravityBall gravityBall)
-    {
-        yield return new WaitForSeconds(_turnOnColliderDelay);
-        gravityBall.BallCollider.enabled = true;
     }
 
     private void OnBallAmountChanged()

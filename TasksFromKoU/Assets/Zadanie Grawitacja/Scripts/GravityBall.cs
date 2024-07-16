@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GravityBall : MonoBehaviour
@@ -9,28 +10,19 @@ public class GravityBall : MonoBehaviour
     private Collider2D _ballCollider;
 
     private float _ballRadius;
+    private float _originalBallRadius;
+    private bool _isActive = false;
+    private Coroutine _activationCoroutine;
 
     public Rigidbody2D BallRigidbody => _ballRigidbody;
-    public Collider2D BallCollider => _ballCollider;
-
     public event Action<GravityBall, GravityBall, Vector3> OnCollisionBetweenBallsHappened;
     public event Action<GravityBall> OnBallDestroyed;
-
-    private bool _isActive = true;
-
-    private bool _onBallDestroyedCalled;
+    public bool IsActive => _isActive;
 
     private void Awake()
     {
-        _ballRadius = transform.localScale.x / 2;
-    }
-
-    private void OnDestroy()
-    {
-        if(!_onBallDestroyedCalled)
-        {
-            OnBallDestroyed?.Invoke(this);
-        }
+        _originalBallRadius = transform.localScale.x / 2;
+        ResetBall(false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -40,7 +32,7 @@ public class GravityBall : MonoBehaviour
             return;
         }
         GravityBall otherGravityBall = collision.collider.GetComponent<GravityBall>();
-        if (otherGravityBall == null)
+        if (otherGravityBall == null || !otherGravityBall._isActive)
         {
             return;
         }
@@ -69,11 +61,35 @@ public class GravityBall : MonoBehaviour
         _ballRigidbody.mass = value;
     }
 
-    public void DestroyBall()
+    public void ActivateWithDelay(float delay)
     {
-        OnBallDestroyed?.Invoke(this);
-        _onBallDestroyedCalled = true;
+        if(_activationCoroutine != null)
+        {
+            StopCoroutine(_activationCoroutine);
+        }
+        _activationCoroutine = StartCoroutine(ActivateWithDelayCoroutine(delay));
+    }
+
+    public IEnumerator ActivateWithDelayCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _isActive = true;
+        _activationCoroutine = null;
+        _ballCollider.enabled = true;
+    }
+
+    public void ResetBall(bool invokeDestroyEvent)
+    {
+        if(invokeDestroyEvent)
+        { 
+            OnBallDestroyed?.Invoke(this);
+        }
         _isActive = false;
-        Destroy(this.gameObject);
+        SetRadius(_originalBallRadius);
+        _ballCollider.enabled = false;
+        if(_activationCoroutine != null)
+        {
+            StopCoroutine(_activationCoroutine);
+        }
     }
 }
