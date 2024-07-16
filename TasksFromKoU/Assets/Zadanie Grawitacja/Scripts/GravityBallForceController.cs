@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class BallForceController : MonoBehaviour
+public class GravityBallForceController : MonoBehaviour
 {
     [SerializeField]
-    private BallSpawner _ballSpawner;
+    private GravityBallSpawner _ballSpawner;
     [SerializeField]
     private float _g;
 

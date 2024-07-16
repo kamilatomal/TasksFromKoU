@@ -6,7 +6,7 @@ public class BallSpawnerUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _ballAmountText;
     [SerializeField]
-    private BallSpawner _ballSpawner;
+    private GravityBallSpawner _ballSpawner;
 
     private void Start()
     {
