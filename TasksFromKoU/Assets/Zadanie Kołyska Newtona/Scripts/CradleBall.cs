@@ -6,27 +6,16 @@ public class CradleBall : MonoBehaviour
     private DistanceJoint2D _joint2D;
     [SerializeField]
     private Rigidbody2D _rigidBody2D;
-    [SerializeField]
-    private float _maxDragDistance = 6f;
-    [SerializeField]
-    private float _forceValue = 0.1f;
 
     private Vector2 _mouseWorldPosition;
-    private Vector2 _jointPosition;
-    private Vector2 _startBallPosition;
-    private Vector2 _directionToTarget;
+    private Vector2 _jointConnectedAnchor;
+    private Vector2 _mouseOffset;
+    private Vector2 _mouseOffsetWithMousePosition;
     private bool _isDragged;
-
-    public Rigidbody2D RigidBody2D => _rigidBody2D;
 
     private void Awake()
     {
-        _rigidBody2D.isKinematic = true;
-        _startBallPosition = transform.position; 
-        _joint2D.distance = _maxDragDistance;
-        _jointPosition = _joint2D.connectedBody.transform.position;
-        Vector2 direction = ((Vector2)transform.position - _jointPosition).normalized;
-        transform.position = _jointPosition + (direction * _maxDragDistance);
+        _jointConnectedAnchor = _joint2D.connectedBody.position + _joint2D.connectedAnchor;
     }
 
     private void FixedUpdate()
@@ -38,41 +27,36 @@ public class CradleBall : MonoBehaviour
 
         else
         {
-            float distanceBetweenMouseAndJoint = Vector2.Distance(_mouseWorldPosition, _joint2D.connectedBody.transform.position);
-            if (distanceBetweenMouseAndJoint > _maxDragDistance)
+            float distanceBetweenMouseAndJoint = Vector2.Distance(_mouseOffsetWithMousePosition + _joint2D.anchor, _jointConnectedAnchor);
+            if (distanceBetweenMouseAndJoint > _joint2D.distance)
             {
-                Vector2 direction = (_mouseWorldPosition - _jointPosition).normalized;
-                _rigidBody2D.MovePosition(_jointPosition + (direction * _maxDragDistance));
+                Vector2 direction = ((_mouseOffsetWithMousePosition + _joint2D.anchor) - _jointConnectedAnchor).normalized;
+                _rigidBody2D.MovePosition(_jointConnectedAnchor + (direction * _joint2D.distance) - _joint2D.anchor);
             }
             else
             {
-                _rigidBody2D.MovePosition(_mouseWorldPosition);
+                _rigidBody2D.MovePosition(_mouseOffsetWithMousePosition);
             }
         }
     }
+
     private void OnMouseDown()
     {
         _isDragged = true;
+        _mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        _mouseOffset = _rigidBody2D.position - _mouseWorldPosition;
     }
 
     private void OnMouseDrag()
     {
         _isDragged = true;
         _mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        _mouseOffsetWithMousePosition = _mouseWorldPosition + _mouseOffset;
     }
 
     private void OnMouseUp()
     {
-        _directionToTarget = (_startBallPosition - (Vector2)transform.position);
-        _joint2D.enabled = true;
-        _rigidBody2D.isKinematic = false;
         _isDragged = false;
-        HandleBallBehaviourAfterRelease();
-    }
-
-    private void HandleBallBehaviourAfterRelease()
-    {
-        _rigidBody2D.AddForce(_directionToTarget * _forceValue, ForceMode2D.Impulse);
     }
 
     private void OnDrawGizmos()
@@ -82,10 +66,9 @@ public class CradleBall : MonoBehaviour
             return;
         }
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(_joint2D.transform.position, _maxDragDistance);
-        Vector2 direction = (_mouseWorldPosition - _jointPosition).normalized;
+        Gizmos.DrawWireSphere(_joint2D.transform.position, _joint2D.distance);
+        Vector2 direction = (_mouseWorldPosition - _jointConnectedAnchor).normalized;
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(_jointPosition, _jointPosition + (direction * _maxDragDistance));
-        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(_jointConnectedAnchor, _jointConnectedAnchor + (direction * _joint2D.distance));
     }
 }
