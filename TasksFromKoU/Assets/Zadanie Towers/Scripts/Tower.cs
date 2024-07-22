@@ -1,13 +1,12 @@
+using System;
 using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
     [SerializeField]
-    private Transform _smallerBody;
+    private Transform _ballSpawnerPoint;
     [SerializeField]
     private TowerBall _towerBallPrefab;
-    [SerializeField]
-    private Transform _towerBallsContainer;
     [SerializeField]
     private float minRotateDegrees;
     [SerializeField]
@@ -21,6 +20,8 @@ public class Tower : MonoBehaviour
     private float _randomDegree;
     private float _counter;
     private TowerBall _createdTowerBall;
+
+    public event Action OnSpawnTowerAction;
 
     private void FixedUpdate()
     {
@@ -38,16 +39,26 @@ public class Tower : MonoBehaviour
         {
             return;
         }
-        _randomDegree = Random.Range(minRotateDegrees, maxRotateDegrees);
+        _randomDegree = UnityEngine.Random.Range(minRotateDegrees, maxRotateDegrees);
         transform.Rotate(new Vector3(0, 0, _randomDegree), Space.Self);
         Shoot();
     }
 
     private void Shoot()
     {
+        if (_createdTowerBall != null)
+        {
+            _createdTowerBall.OnTargetReached -= OnSpawnTower;
+        }
         _createdTowerBall = Instantiate(_towerBallPrefab);
-        _createdTowerBall.transform.SetParent(_towerBallsContainer);
-        _createdTowerBall.transform.position = _smallerBody.transform.position;
+        _createdTowerBall.transform.position = _ballSpawnerPoint.transform.position;
+        _createdTowerBall.SetShootDirection(_ballSpawnerPoint.transform.position);
         _counter += 1;
+        _createdTowerBall.OnTargetReached += OnSpawnTower;
+    }
+
+    private void OnSpawnTower()
+    {
+        OnSpawnTowerAction?.Invoke();
     }
 }

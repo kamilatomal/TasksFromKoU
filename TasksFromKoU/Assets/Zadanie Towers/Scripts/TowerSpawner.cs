@@ -8,15 +8,28 @@ public class TowerSpawner : MonoBehaviour
     private Transform _towersContainer;
 
     private List<Tower> _towers = new List<Tower>();
+    private Tower _createdTower;
 
     public List<Tower> Towers => _towers;
-    public event Action OnBallSpawned;
-    public event Action OnBallDestroyedAction;
+    public event Action OnTowerSpawned;
+    public event Action OnTowerDestroyedAction;
 
     private void Start()
     {
-        Tower spawnedTower = TowersPoolManager.Instance.GetBall();
-        spawnedTower.transform.SetParent(_towersContainer);
-        _towers.Add(spawnedTower);
+        CreateTower();
+    }
+
+    private void CreateTower()
+    {
+        if (_createdTower != null)
+        {
+            _createdTower.OnSpawnTowerAction -= CreateTower;
+        }
+
+        _createdTower = TowersPoolManager.Instance.GetBall();
+        _createdTower.transform.SetParent(_towersContainer);
+        _towers.Add(_createdTower);
+        _createdTower.OnSpawnTowerAction += CreateTower;
+        OnTowerSpawned?.Invoke();
     }
 }

@@ -15,14 +15,14 @@ public class TowerSpawnerUI : MonoBehaviour
 
     private void OnEnable()
     {
-        _towerSpawner.OnBallSpawned += UpdateBallAmountText;
-        _towerSpawner.OnBallDestroyedAction += UpdateBallAmountText;
+        _towerSpawner.OnTowerSpawned += UpdateBallAmountText;
+        _towerSpawner.OnTowerDestroyedAction += UpdateBallAmountText;
     }
 
     private void OnDisable()
     {
-        _towerSpawner.OnBallSpawned -= UpdateBallAmountText;
-        _towerSpawner.OnBallDestroyedAction -= UpdateBallAmountText;
+        _towerSpawner.OnTowerSpawned -= UpdateBallAmountText;
+        _towerSpawner.OnTowerDestroyedAction -= UpdateBallAmountText;
     }
 
     private void UpdateBallAmountText()
