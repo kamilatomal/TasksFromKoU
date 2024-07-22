@@ -97,7 +97,7 @@ public class Tower : MonoBehaviour
 
     public void Activate()
     {
-        ActivateInternal(UntilActiveDelay, 0f);
+        ActivateInternal(_untilActiveDelay, 0f);
     }
 
 
