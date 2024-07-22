@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class TowerBall : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private float _minMovementUnit;
+    [SerializeField]
+    private float _maxMovementUnit;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        MoveBall();
+    }
+    private void MoveBall()
+    {
+        var randomMovementUnit = Random.Range(_minMovementUnit, _maxMovementUnit);
+        transform.position += new Vector3(randomMovementUnit, randomMovementUnit, 0);
     }
 }

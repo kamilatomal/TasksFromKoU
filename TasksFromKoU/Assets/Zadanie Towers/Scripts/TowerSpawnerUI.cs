@@ -27,6 +27,6 @@ public class TowerSpawnerUI : MonoBehaviour
 
     private void UpdateBallAmountText()
     {
-        _towerAmountText.text = _towerSpawner.TowerBalls.Count.ToString();
+        _towerAmountText.text = _towerSpawner.Towers.Count.ToString();
     }
 }

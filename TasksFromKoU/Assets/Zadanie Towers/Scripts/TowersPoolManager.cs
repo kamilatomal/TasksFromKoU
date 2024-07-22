@@ -45,13 +45,13 @@ public class TowersPoolManager : MonoBehaviour
     {
         Tower tower = Instantiate(_towerPrefab);
         tower.gameObject.transform.SetParent(transform);
-        return Instantiate(tower);
+        return tower;
     }
 
     public Tower GetBall()
     {
-        Tower gravityBall = _towerPool.Get();
-        return gravityBall;
+        Tower tower = _towerPool.Get();
+        return tower;
     }
 
     public void ReturnBallBackToPool(Tower tower)

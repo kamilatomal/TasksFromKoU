@@ -5,17 +5,18 @@ using UnityEngine;
 public class TowerSpawner : MonoBehaviour
 {
     [SerializeField]
-    private int _maxBallAmount = 250;
-    [SerializeField]
-    private Transform _ballContainer;
-    [SerializeField]
-    private float _maxBallMass = 50;
-    [SerializeField]
-    private float _forceValue = 0.1f;
+    private Transform _towersContainer;
 
-    private List<TowerBall> _towerBalls = new List<TowerBall>();
+    private List<Tower> _towers = new List<Tower>();
 
-    public List<TowerBall> TowerBalls => _towerBalls;
+    public List<Tower> Towers => _towers;
     public event Action OnBallSpawned;
     public event Action OnBallDestroyedAction;
+
+    private void Start()
+    {
+        Tower spawnedTower = TowersPoolManager.Instance.GetBall();
+        spawnedTower.transform.SetParent(_towersContainer);
+        _towers.Add(spawnedTower);
+    }
 }
