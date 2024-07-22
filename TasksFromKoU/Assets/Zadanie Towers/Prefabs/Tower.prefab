@@ -31,8 +31,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4001486181627883223}
   - {fileID: 8674456585737032307}
+  - {fileID: 4001486181627883223}
   - {fileID: 1579673550319797081}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -77,11 +77,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ballSpawnerPoint: {fileID: 1579673550319797081}
   _towerBallPrefab: {fileID: 6986045950698314800, guid: 25ea7e4fb6339da40986e0b85cd5b50b, type: 3}
-  _towerBallsContainer: {fileID: 0}
+  _bodySpriteRenderers:
+  - {fileID: 8385983400621977614}
+  - {fileID: 6289782109249636211}
   minRotateDegrees: 15
   maxRotateDegrees: 45
   _towerRotateFrequency: 0.5
   _maxShootAmount: 5
+  _untilActiveDelay: 3
 --- !u!1 &2781178022474426076
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,8 +112,8 @@ Transform:
   m_GameObject: {fileID: 2781178022474426076}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7337252015582126446}
@@ -240,7 +243,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7337252015582126446}
@@ -367,7 +370,7 @@ Transform:
   m_GameObject: {fileID: 9044731545995543486}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
