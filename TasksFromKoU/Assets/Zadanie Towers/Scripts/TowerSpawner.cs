@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,9 +6,14 @@ public class TowerSpawner : MonoBehaviour
 {
     [SerializeField]
     private Transform _towersContainer;
+    [SerializeField]
+    private float _maxTowersAmount = 100f;
 
+    private bool _canSpawn = false;
     private List<Tower> _towers = new List<Tower>();
+
     public List<Tower> Towers => _towers;
+    public bool CanSpawn => _canSpawn;
     public event Action OnTowerSpawned;
     public event Action OnTowerDestroyedAction;
 
@@ -20,22 +24,31 @@ public class TowerSpawner : MonoBehaviour
 
     public void CreateTower(Vector3 spawnPosition, bool isActive)
     {
+        _canSpawn = true;
         Tower createdTower = TowersPoolManager.Instance.GetBall();
         createdTower.SetTowerSpawner(this);
         createdTower.transform.SetParent(_towersContainer);
         createdTower.transform.position = spawnPosition;
         _towers.Add(createdTower);
-        createdTower.IsActive = isActive;
         createdTower.SetTowersColor();
         OnTowerSpawned?.Invoke();
-        StartCoroutine(ActivateTower(createdTower));
-    }
+        if (isActive)
+        {
+            createdTower.ActivateTowerInstantly();
+        }
+        else
+        {
+            createdTower.Activate();
+        }
 
-    private IEnumerator ActivateTower(Tower tower)
-    {
-        yield return new WaitForSeconds(tower.UntilActiveDelay);
-        tower.IsActive = true;
-        tower.SetTowersColor();
+        if (_towers.Count >= _maxTowersAmount)
+        {
+            foreach (Tower tower in _towers)
+            {
+                tower.ActivateTowerInstantly();
+                _canSpawn = false;
+            }
+        }
     }
 
     public void OnTowerDestroyed(Tower tower)

@@ -16,8 +16,6 @@ public class TowerBall : MonoBehaviour
     private Tower _creator;
     private bool _isBallDestroyed;
  
-    public bool IsBallDestroyed { get { return _isBallDestroyed; } set { _isBallDestroyed = value; } }
-
     private void Start()
     {
         _startPosition = transform.position;
@@ -67,9 +65,12 @@ public class TowerBall : MonoBehaviour
         float distance = (transform.position - _startPosition).magnitude;
         if(distance >= _targetDistance && !_isBallDestroyed)
         {
-            _towerSpawner.CreateTower(transform.position, false);
             Destroy(gameObject);
             _isBallDestroyed = true;
+            if (_towerSpawner.CanSpawn)
+            {
+                _towerSpawner.CreateTower(transform.position, false);
+            }
         }
     }
 }

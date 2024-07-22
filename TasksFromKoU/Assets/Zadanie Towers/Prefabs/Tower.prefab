@@ -83,8 +83,8 @@ MonoBehaviour:
   minRotateDegrees: 15
   maxRotateDegrees: 45
   _towerRotateFrequency: 0.5
-  _maxShootAmount: 5
-  _untilActiveDelay: 3
+  _maxShootAmount: 12
+  _untilActiveDelay: 6
 --- !u!1 &2781178022474426076
 GameObject:
   m_ObjectHideFlags: 0

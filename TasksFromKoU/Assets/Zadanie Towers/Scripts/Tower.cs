@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,10 +31,9 @@ public class Tower : MonoBehaviour
     private bool _isDestroyed;
     private TowerSpawner _towerSpawner;
     private TowerBall _createdTowerBall;
+    private Coroutine _activateCoroutine;
 
-    public bool IsActive { get { return _isActive; } set { _isActive = value; } }
     public bool IsDestroyed { get { return _isDestroyed; } set { _isDestroyed = value; } }
-    public float UntilActiveDelay => _untilActiveDelay;
     public event Action<Vector3> OnSpawnTowerAction;
 
     private void FixedUpdate()
@@ -54,6 +54,7 @@ public class Tower : MonoBehaviour
             }
             RotateTower();
             Shoot();
+            _counter += 1;
             _timer = 0;
         }
     }
@@ -69,13 +70,37 @@ public class Tower : MonoBehaviour
         _createdTowerBall = Instantiate(_towerBallPrefab);
         _createdTowerBall.transform.position = _ballSpawnerPoint.transform.position;
         _createdTowerBall.Setup(_ballSpawnerPoint.transform.up, _towerSpawner, this);
-        _counter += 1;
+    }
+
+    private IEnumerator ActivateTowerCoroutine(float delay, float initialTimer)
+    {
+        yield return new WaitForSeconds(delay);
+        _isActive = true;
+        _counter = 0;
+        _timer = initialTimer;
+        SetTowersColor();
+    }
+
+    private void ActivateInternal(float delay, float initialTimer)
+    {
+        if (_activateCoroutine != null)
+        {
+            StopCoroutine(_activateCoroutine);
+        }
+        _activateCoroutine = StartCoroutine(ActivateTowerCoroutine(delay, initialTimer));
     }
 
     public void SetTowerSpawner(TowerSpawner towerSpawner)
     {
         _towerSpawner = towerSpawner;
     }
+
+    public void Activate()
+    {
+        ActivateInternal(UntilActiveDelay, 0f);
+    }
+
+
 
     public void SetTowersColor()
     {
@@ -88,5 +113,10 @@ public class Tower : MonoBehaviour
         {
             sprite.color = _isActive ? Color.red : Color.white;
         }
+    }
+
+    public void ActivateTowerInstantly()
+    {
+        ActivateInternal(0, _towerRotateFrequency);
     }
 }

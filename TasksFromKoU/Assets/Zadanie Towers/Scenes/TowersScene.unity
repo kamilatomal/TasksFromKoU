@@ -646,6 +646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _towersContainer: {fileID: 1840405231}
+  _maxTowersAmount: 100
 --- !u!4 &1228409248
 Transform:
   m_ObjectHideFlags: 0
