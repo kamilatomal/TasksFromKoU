@@ -17,7 +17,7 @@ public class SlingshotController : MonoBehaviour
         {
             return;
         }
-        _activeBall.OnBallLand -= OnBallLended;
+        _activeBall.OnBallLand -= OnBallLanded;
         _activeBall.OnBallLand -= OnBallShoot;
     }
 
@@ -30,11 +30,11 @@ public class SlingshotController : MonoBehaviour
     {
         if (_activeBall != null)
         {
-            _activeBall.OnBallLand -= OnBallLended;
+            _activeBall.OnBallLand -= OnBallLanded;
             _activeBall.OnBallLand -= OnBallShoot;
         }
         _activeBall = Instantiate(_ballPrefab, transform.position, Quaternion.identity);
-        _activeBall.OnBallLand += OnBallLended;
+        _activeBall.OnBallLand += OnBallLanded;
         _activeBall.OnBallShoot += OnBallShoot;
     }
 
@@ -43,7 +43,7 @@ public class SlingshotController : MonoBehaviour
         OnActiveBallShootAction?.Invoke(_activeBall);
     }
 
-    private void OnBallLended()
+    private void OnBallLanded()
     {
         OnActiveBallLandedAction?.Invoke(_activeBall);
         CreateBall();

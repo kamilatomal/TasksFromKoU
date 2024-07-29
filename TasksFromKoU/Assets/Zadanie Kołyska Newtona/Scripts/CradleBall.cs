@@ -42,7 +42,6 @@ public class CradleBall : MonoBehaviour
 
     private void OnMouseDown()
     {
-        _isDragged = true;
         _mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         _mouseOffset = _rigidBody2D.position - _mouseWorldPosition;
     }

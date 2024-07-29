@@ -5,7 +5,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     [SerializeField]
-    private TargetJoint2D _springJoint;
+    private TargetJoint2D _targetJoint;
     [SerializeField]
     private Rigidbody2D _rigidBody2D;
     [SerializeField]
@@ -27,8 +27,8 @@ public class Ball : MonoBehaviour
 
     private void Awake()
     {
-        _springJoint.target = new Vector2(transform.position.x, transform.position.y);
-        _targetPosition = new Vector3(_springJoint.target.x, _springJoint.target.y, 0);
+        _targetJoint.target = new Vector2(transform.position.x, transform.position.y);
+        _targetPosition = new Vector3(_targetJoint.target.x, _targetJoint.target.y, 0);
     }
 
     private void FixedUpdate()
@@ -40,11 +40,11 @@ public class Ball : MonoBehaviour
 
         else
         {
-            float distanceBetweenMouseAndJoint = Vector2.Distance(_mouseWorldPosition, _springJoint.target);
+            float distanceBetweenMouseAndJoint = Vector2.Distance(_mouseWorldPosition, _targetJoint.target);
             if (distanceBetweenMouseAndJoint > _maxDragDistance)
             {
-                Vector2 direction = (_mouseWorldPosition - _springJoint.target).normalized;
-                _rigidBody2D.MovePosition(_springJoint.target + (direction * _maxDragDistance));
+                Vector2 direction = (_mouseWorldPosition - _targetJoint.target).normalized;
+                _rigidBody2D.MovePosition(_targetJoint.target + (direction * _maxDragDistance));
             }
 
             else
@@ -66,7 +66,7 @@ public class Ball : MonoBehaviour
     private void OnMouseDown()
     {
         _isDragged = true;
-        _springJoint.enabled = false;
+        _targetJoint.enabled = false;
         _rigidBody2D.isKinematic = true;
     }
 
@@ -86,15 +86,15 @@ public class Ball : MonoBehaviour
 
     private void HandleBallBehaviourAfterRelease()
     {
-        float distanceBetweenJointAndBall = Vector2.Distance(_springJoint.target, transform.position);
+        float distanceBetweenJointAndBall = Vector2.Distance(_targetJoint.target, transform.position);
         if (distanceBetweenJointAndBall < _minBallShootDistance)
         {
-            _springJoint.enabled = true;
+            _targetJoint.enabled = true;
         }
 
         else
         {
-            _springJoint.enabled = false;
+            _targetJoint.enabled = false;
             _rigidBody2D.AddForce(_startDirectionToTarget * _forceValue, ForceMode2D.Impulse);
             OnBallShoot?.Invoke();
         }
@@ -114,9 +114,9 @@ public class Ball : MonoBehaviour
         }
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(_targetPosition, _maxDragDistance);
-        Vector2 direction = (_mouseWorldPosition - _springJoint.target).normalized;
+        Vector2 direction = (_mouseWorldPosition - _targetJoint.target).normalized;
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(_springJoint.target, _springJoint.target + (direction * _maxDragDistance));
+        Gizmos.DrawLine(_targetJoint.target, _targetJoint.target + (direction * _maxDragDistance));
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(_targetPosition, _minBallShootDistance);
     }

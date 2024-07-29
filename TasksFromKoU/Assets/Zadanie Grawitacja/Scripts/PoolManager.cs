@@ -46,7 +46,7 @@ public class PoolManager : MonoBehaviour
     {
         GravityBall gravityBall = Instantiate(_gravityBallPrefab);
         gravityBall.gameObject.transform.SetParent(transform);
-        return Instantiate(gravityBall);
+        return gravityBall;
     }
 
     public GravityBall GetBall()

@@ -29,7 +29,7 @@ public class TowersPoolManager : MonoBehaviour
 
     private void Start()
     {
-        _towerPool = new ObjectPool<Tower>(CreateBall, (Tower tower) =>
+        _towerPool = new ObjectPool<Tower>(CreateTower, (Tower tower) =>
         {
             tower.gameObject.SetActive(true);
         }, (Tower tower) =>
@@ -41,20 +41,20 @@ public class TowersPoolManager : MonoBehaviour
         }, false, _defaultCapacity, _maxCapacity);
     }
 
-    private Tower CreateBall()
+    private Tower CreateTower()
     {
         Tower tower = Instantiate(_towerPrefab);
         tower.gameObject.transform.SetParent(transform);
         return tower;
     }
 
-    public Tower GetBall()
+    public Tower GetTower()
     {
         Tower tower = _towerPool.Get();
         return tower;
     }
 
-    public void ReturnBallBackToPool(Tower tower)
+    public void ReturnTowerBackToPool(Tower tower)
     {
         _towerPool.Release(tower);
         tower.gameObject.transform.SetParent(transform);

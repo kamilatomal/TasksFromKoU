@@ -48,7 +48,7 @@ public class TowerBall : MonoBehaviour
         _isBallDestroyed = true;
         tower.IsDestroyed = true;
         _towerSpawner.OnTowerDestroyed(tower);
-        Destroy(tower.gameObject);
+        TowersPoolManager.Instance.ReturnTowerBackToPool(tower);
         Destroy(gameObject);
     }
 

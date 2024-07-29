@@ -25,7 +25,7 @@ public class TowerSpawner : MonoBehaviour
     public void CreateTower(Vector3 spawnPosition, bool isActive)
     {
         _canSpawn = true;
-        Tower createdTower = TowersPoolManager.Instance.GetBall();
+        Tower createdTower = TowersPoolManager.Instance.GetTower();
         createdTower.SetTowerSpawner(this);
         createdTower.transform.SetParent(_towersContainer);
         createdTower.transform.position = spawnPosition;
